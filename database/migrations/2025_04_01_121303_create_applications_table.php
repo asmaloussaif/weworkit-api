@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('applications', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('freelancer_id')->constrained('users')->onDelete('cascade');
-            $table->integer('motivation')->default(1);
-            $table->text('statut')->nullable();
-            $table->timestamps();
-        });
+                   $table->id();
+                   $table->foreignId('freelancer_id')->constrained('users')->onDelete('cascade');
+                   $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
+                   $table->text('motivation');
+                   $table->text('statut')->nullable();
+                   $table->timestamps();
+               });       
     }
 
     /**

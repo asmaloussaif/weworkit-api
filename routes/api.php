@@ -2,6 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -21,9 +23,12 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ReclamationController;
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::apiResource('reclamations', ReclamationController::class);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -74,4 +79,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/applications/{project_id}', [ApplicationController::class, 'index']); 
         Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']); 
     });
+    Route::get('/test-db', function () {
+        try {
+            DB::connection()->getPdo();
+            return response()->json(['message' => 'Connexion réussie à la base de données'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Impossible de se connecter à la base de données', 'message' => $e->getMessage()], 500);
+        }
+    });
+
 });
