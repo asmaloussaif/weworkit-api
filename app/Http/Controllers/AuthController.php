@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
@@ -33,7 +35,7 @@ class AuthController extends Controller
         return response()->json(['message' => 'User registered successfully'], 201);
     }
 
-    public function login(Request $request)
+   public function login(Request $request)
     {
         $request->validate([
             'email' => 'required|string|email',
@@ -50,7 +52,7 @@ class AuthController extends Controller
             'token' => $user->createToken('auth_token')->plainTextToken,
             'role' => $user->getRoleNames()
         ]);
-    }
+    } 
 
     public function logout(Request $request)
     {
