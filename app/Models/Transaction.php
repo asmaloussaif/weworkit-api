@@ -10,7 +10,7 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['client_id', 'freelancer_id', 'montant', 'statut'];
+    protected $fillable = ['client_id', 'freelancer_id', 'montant', 'statut','project_id'];
 
     public function client()
     {

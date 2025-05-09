@@ -9,7 +9,8 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['client_id', 'titre', 'description', 'statut'];
+    protected $fillable = ['client_id', 'titre', 'description', 'statut', 'categorie', 'budget', 'date_limite'];
+
 
     public function client()
     {
@@ -20,4 +21,9 @@ class Project extends Model
     {
         return $this->hasMany(Application::class);
     }
+    public function selectedApplication()
+{
+    return $this->hasOne(Application::class)->with('freelancer');
+}
+
 }

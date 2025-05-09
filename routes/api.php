@@ -24,12 +24,14 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ReclamationController;
-
+use App\Http\Controllers\ChartController;
 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    Route::get('/users', [AuthController::class, 'getUsers']);
+    Route::delete('/users/{id}', [AuthController::class, 'destroy']);
     Route::get('/profile', function (Request $request) {
         return response()->json($request->user());
     });
@@ -55,17 +57,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/projects', [ProjectController::class, 'store']);
         Route::get('/projects', [ProjectController::class, 'index']);
+        Route::get('/projects/summary', [ProjectController::class, 'getSummary']);
         Route::get('/projects/{id}', [ProjectController::class, 'show']);
         Route::put('/projects/{id}/status', [ProjectController::class, 'updateStatus']);
+        Route::put('/projects/{id}', [ProjectController::class, 'update']);
+        Route::get('/myProjects', [ProjectController::class, 'myProjects']);
+        Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
+       
+
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/messages', [MessageController::class, 'store']);
         Route::get('/messages/{conversation_id}', [MessageController::class, 'index']);
+        Route::get('/conversations', [MessageController::class, 'conversations']);
+
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/payments', [PaymentController::class, 'store']);
         Route::get('/payments/history', [PaymentController::class, 'index']);
         Route::put('/payments/{id}/status', [PaymentController::class, 'updateStatus']);
+        Route::get('/payments/{id}', [PaymentController::class, 'show']);
+        Route::get('/payments/project/{projectId}', [PaymentController::class, 'showByProject']);
+
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reviews', [ReviewController::class, 'store']);
@@ -75,6 +88,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/applications', [ApplicationController::class, 'store']); 
         Route::get('/applications/{project_id}', [ApplicationController::class, 'index']); 
         Route::put('/applications/{id}/status', [ApplicationController::class, 'updateStatus']); 
+        Route::get('/my-applications', [ApplicationController::class, 'myApplications']);
+        Route::get('/application_project', [ApplicationController::class, 'applicationsByProject']);
+    });
+    Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/reclamations', [ReclamationController::class, 'index']);
+    Route::post('/reclamations', [ReclamationController::class, 'store']);
+    Route::get('/reclamations/{reclamation}', [ReclamationController::class, 'show']);
+    Route::put('/reclamations/{reclamation}', [ReclamationController::class, 'update']);
+    Route::delete('/reclamations/{reclamation}', [ReclamationController::class, 'destroy']);
+    Route::put('/reclamations/{id}', [ReclamationController::class, 'updateStatus']);
     });
     Route::get('/test-db', function () {
         try {
@@ -84,8 +107,11 @@ Route::middleware('auth:sanctum')->group(function () {
             return response()->json(['error' => 'Impossible de se connecter à la base de données', 'message' => $e->getMessage()], 500);
         }
     });
-
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/charts/status', [ChartController::class, 'projectStatusStats']);
+        Route::get('/charts/deadlines', [ChartController::class, 'projectDeadlineStats']);
+    });
 });
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::apiResource('reclamations', ReclamationController::class);
+

@@ -18,7 +18,8 @@ class PaymentController extends Controller
             'client_id' => auth()->id(),
             'freelancer_id' => $request->freelancer_id,
             'montant' => $request->montant,
-            'statut' => 'en attente',
+            'statut' => 'on hold',
+            'project_id' => $request->project_id,
         ]);
 
         return response()->json($payment, 201);
@@ -26,9 +27,11 @@ class PaymentController extends Controller
 
     public function index()
     {
-        $transactions = Transaction::where('client_id', auth()->id())
+        $transactions = Transaction::with('freelancer','client')
+             ->where('client_id', auth()->id())
             ->orWhere('freelancer_id', auth()->id())
             ->orderBy('created_at', 'desc')
+
             ->get();
 
         return response()->json($transactions);
@@ -36,9 +39,6 @@ class PaymentController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $request->validate([
-            'statut' => 'required|in:en attente,terminé,annulé',
-        ]);
 
         $transaction = Transaction::where('client_id', auth()->id())
             ->orWhere('freelancer_id', auth()->id())
@@ -48,4 +48,24 @@ class PaymentController extends Controller
 
         return response()->json($transaction);
     }
+    public function show($id)
+{
+    $transaction = Transaction::where(function ($query) {
+        $query->where('client_id', auth()->id())
+              ->orWhere('freelancer_id', auth()->id());
+    })->findOrFail($id);
+
+    return response()->json($transaction);
+}
+public function showByProject($projectId)
+{
+    $transaction = Transaction::where('project_id', $projectId)
+        ->first();
+
+    if (!$transaction) {
+        return response()->json(['message' => 'Transaction not found'], 404);
+    }
+
+    return response()->json($transaction);
+}
 }

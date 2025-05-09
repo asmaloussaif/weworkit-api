@@ -9,7 +9,7 @@ class Reclamation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['sujet', 'description', 'user_id'];
+    protected $fillable = ['sujet', 'description', 'user_id','statut'];
 
     public function user()
     {

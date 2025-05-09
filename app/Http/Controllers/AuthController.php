@@ -50,7 +50,8 @@ class AuthController extends Controller
 
         return response()->json([
             'token' => $user->createToken('auth_token')->plainTextToken,
-            'role' => $user->getRoleNames()
+            'role' => $user->getRoleNames(),
+            'user'=>$user
         ]);
     } 
 
@@ -59,4 +60,36 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out successfully']);
     }
+    public function getUsers(Request $request)
+{
+    $users = User::whereHas('roles', function ($query) {
+        $query->where('name', '!=', 'admin');
+    })->get();
+
+    
+    $usersWithRoles = $users->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'lastName' => $user->lastName,
+            'email' => $user->email,
+            'role' => $user->getRoleNames(), 
+            'created_at'=> $user->created_at,
+        ];
+    });
+
+    return response()->json($usersWithRoles);
+}
+public function destroy($id)
+{
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
+    }
+
+    $user->delete();
+
+    return response()->json(['message' => 'User deleted successfully']);
+}
 }

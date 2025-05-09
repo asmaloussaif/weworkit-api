@@ -47,4 +47,12 @@ class ReclamationController extends Controller
         $reclamation->delete();
         return response()->json(null, 204);
     }
+    public function updateStatus(Request $request, $id)
+{
+    $reclamation = Reclamation::findOrFail($id);
+    $reclamation->statut = $request->input('statut');
+    $reclamation->save();
+
+    return response()->json($reclamation);
+}
 }

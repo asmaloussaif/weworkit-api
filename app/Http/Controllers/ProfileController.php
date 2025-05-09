@@ -23,7 +23,8 @@ class ProfileController extends Controller
 
     public function show($id)
     {
-        return response()->json(Profile::with('user')->findOrFail($id));
+        $profile = Profile::with('user')->where('user_id', $id)->firstOrFail();
+        return response()->json($profile);
     }
 
     public function update(Request $request, $id)
