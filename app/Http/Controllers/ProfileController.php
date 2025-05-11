@@ -26,7 +26,17 @@ class ProfileController extends Controller
         $profile = Profile::with('user')->where('user_id', $id)->firstOrFail();
         return response()->json($profile);
     }
-
+    public function freelancerDetails(Request $request)
+    {
+        $userIds = $request->query('user_ids');
+    
+        $profiles = Profile::with('user')
+            ->whereIn('user_id', $userIds)
+            ->get();
+    
+        return response()->json($profiles);
+    }
+    
     public function update(Request $request, $id)
     {
         $profile = Profile::where('user_id', auth()->id())->findOrFail($id);

@@ -80,6 +80,14 @@ class AuthController extends Controller
 
     return response()->json($usersWithRoles);
 }
+public function getFreelencerId(Request $request)
+{
+    $userIds = User::whereHas('roles', function ($query) {
+        $query->where('name', 'freelancer');
+    })->pluck('id');
+
+    return response()->json($userIds);
+}
 public function destroy($id)
 {
     $user = User::find($id);
@@ -92,4 +100,5 @@ public function destroy($id)
 
     return response()->json(['message' => 'User deleted successfully']);
 }
+
 }

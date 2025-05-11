@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/users', [AuthController::class, 'getUsers']);
+    Route::get('/freelencerId', [AuthController::class, 'getFreelencerId']);
     Route::delete('/users/{id}', [AuthController::class, 'destroy']);
     Route::get('/profile', function (Request $request) {
         return response()->json($request->user());
@@ -53,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/profile/{id}', [ProfileController::class, 'show']);
         Route::put('/profile/{id}', [ProfileController::class, 'update']);
         Route::get('/freelancers', [ProfileController::class, 'index']);
+        Route::get('/freelancers_list', [ProfileController::class, 'freelancerDetails']);
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/projects', [ProjectController::class, 'store']);
