@@ -101,4 +101,24 @@ public function destroy($id)
     return response()->json(['message' => 'User deleted successfully']);
 }
 
+   public function getClient(Request $request)
+{
+    $users = User::whereHas('roles', function ($query) {
+        $query->where('name', '=', 'client');
+    })->get();
+
+    
+    $usersWithRoles = $users->map(function ($user) {
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'lastName' => $user->lastName,
+            'email' => $user->email,
+            'role' => $user->getRoleNames(), 
+            'created_at'=> $user->created_at,
+        ];
+    });
+
+    return response()->json($usersWithRoles);
+}
 }

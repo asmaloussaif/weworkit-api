@@ -93,4 +93,12 @@ public function getSummary()
 
     return response()->json($summary);
 }
+public function getUnpaidProjectsWithClient()
+{
+    $projects = Project::with('client') 
+        ->where('statut', 'in_progress')  
+        ->get();
+
+    return response()->json($projects);
+}
 }

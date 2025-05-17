@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\ForgotPasswordController;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,11 +26,12 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ReclamationController;
 use App\Http\Controllers\ChartController;
-
+use App\Http\Controllers\AdminController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-
+    Route::get('/admin/dashboard-summary', [AdminController::class, 'dashboardSummary']);
+    Route::get('/client', [AuthController::class, 'getClient']);
     Route::get('/users', [AuthController::class, 'getUsers']);
     Route::get('/freelencerId', [AuthController::class, 'getFreelencerId']);
     Route::delete('/users/{id}', [AuthController::class, 'destroy']);
@@ -65,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/projects/{id}', [ProjectController::class, 'update']);
         Route::get('/myProjects', [ProjectController::class, 'myProjects']);
         Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
+        Route::get('/unpaid_project', [ProjectController::class, 'getUnpaidProjectsWithClient']);
        
 
     });
@@ -112,8 +115,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/charts/status', [ChartController::class, 'projectStatusStats']);
         Route::get('/charts/deadlines', [ChartController::class, 'projectDeadlineStats']);
+         Route::get('/charts/freelencer', [ChartController::class, 'applicationStatusStats']);
     });
 });
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+

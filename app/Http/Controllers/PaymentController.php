@@ -10,16 +10,18 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'freelancer_id' => 'required|exists:users,id',
+            'client_id' => 'required|exists:users,id',
             'montant' => 'required|numeric|min:1',
         ]);
 
         $payment = Transaction::create([
-            'client_id' => auth()->id(),
-            'freelancer_id' => $request->freelancer_id,
+            'client_id' => $request->client_id,
+            'freelancer_id' =>  auth()->id(),
             'montant' => $request->montant,
-            'statut' => 'on hold',
+            'statut' => 'Unpaid',
+            'description'=> $request->description,
             'project_id' => $request->project_id,
+           
         ]);
 
         return response()->json($payment, 201);
@@ -27,7 +29,7 @@ class PaymentController extends Controller
 
     public function index()
     {
-        $transactions = Transaction::with('freelancer','client')
+        $transactions = Transaction::with('freelancer','client','project')
              ->where('client_id', auth()->id())
             ->orWhere('freelancer_id', auth()->id())
             ->orderBy('created_at', 'desc')

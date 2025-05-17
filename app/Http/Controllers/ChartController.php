@@ -29,4 +29,15 @@ class ChartController extends Controller
 
     return response()->json($stats);
 }
+  public function applicationStatusStats()
+    {
+        $freelencerId = auth()->id();
+    
+        $stats = \App\Models\Application::where('freelancer_id', $freelencerId)
+            ->select('statut', \DB::raw('COUNT(*) as count'))
+            ->groupBy('statut')
+            ->get();
+    
+        return response()->json($stats);
+    }
 }

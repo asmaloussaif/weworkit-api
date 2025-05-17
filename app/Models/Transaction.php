@@ -10,7 +10,7 @@ class Transaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['client_id', 'freelancer_id', 'montant', 'statut','project_id'];
+    protected $fillable = ['client_id', 'freelancer_id', 'montant', 'statut','description','project_id','date_limite'];
 
     public function client()
     {
@@ -20,5 +20,9 @@ class Transaction extends Model
     public function freelancer()
     {
         return $this->belongsTo(User::class, 'freelancer_id');
+    }
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
     }
 }
