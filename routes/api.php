@@ -87,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/reviews', [ReviewController::class, 'store']);
+        Route::post('/reviews_freelencer', [ReviewController::class, 'storeFreelencer']);
         Route::get('/reviews/{freelancer_id}', [ReviewController::class, 'index']);
     });
     Route::middleware('auth:sanctum')->group(function () {

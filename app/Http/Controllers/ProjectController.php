@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Application;
 class ProjectController extends Controller
 {
     public function store(Request $request)
@@ -40,23 +41,40 @@ class ProjectController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $project = Project::where('client_id', auth()->id())->findOrFail($id);
+        
+        $project = Project::findOrFail($id);
         $project->update(['statut' => $request->statut]);
+        $application = Application::findOrFail($request->application_id);
+        $application->update(['statut' => $request->statut]);
 
         return response()->json($project);
     }
-    public function myProjects()
-    {
-        $clientId = Auth::id();
-    
-        $projects = Project::with(['selectedApplication.freelancer']) 
-            ->where('client_id', $clientId)
-            ->get();
-    
-        return response()->json($projects);
-    }
+
+public function myProjects()
+{
+    $clientId = Auth::id();
+
+    $projects = Project::with(['selectedApplication.freelancer'])
+        ->where('client_id', $clientId)
+        ->get()
+        ->map(function ($project) {
+            $selectedApplication = $project->selectedApplication;
+
+            if ($selectedApplication && in_array($selectedApplication->status, ['on hold', 'refuse'])) {
+             
+                $selectedApplication->setRelation('freelancer', null);
+            }
+
+            return $project;
+        });
+
+    return response()->json($projects->values());
+}
+
+
     public function update(Request $request, $id)
 {
+    
     $project = Project::where('client_id', auth()->id())->findOrFail($id);
 
     $validated = $request->validate([
@@ -86,8 +104,7 @@ public function destroy($id)
 }
 public function getSummary()
 {
-    $summary = DB::table('projects')
-        ->select('statut', DB::raw('count(*) as total'))
+    $summary = Project::select('statut', DB::raw('count(*) as total'))
         ->groupBy('statut')
         ->get();
 

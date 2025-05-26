@@ -49,13 +49,17 @@ class ApplicationController extends Controller
         $project = Project::where('id', $application->project_id)
                           ->where('client_id', auth()->id())
                           ->firstOrFail();
-    
-        $project->update(['statut' => 'in_progress']);
-    
-        return response()->json([
+       if($request->statut =='accepted') {
+       $project->update(['statut' => 'in_progress']);
+       } else{
+       return response()->json([
             'application' => $application,
             'project' => $project,
         ]);
+       }
+        
+    
+     
     }
     
     public function applicationsByProject(Request $request)
@@ -69,6 +73,7 @@ class ApplicationController extends Controller
    
         $applications = Application::with(['project.client', 'freelancer'])
             ->whereIn('project_id', $projectIds)
+            ->where('statut','on hold')
             ->get();
             Log::info('applications IDs for client:', ['projects' => $applications]);
      

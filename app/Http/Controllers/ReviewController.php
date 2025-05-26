@@ -24,6 +24,23 @@ class ReviewController extends Controller
 
         return response()->json($review, 201);
     }
+ public function storeFreelencer(Request $request)
+    {
+        $request->validate([
+         
+            'note' => 'required|integer|min:1|max:5',
+            'commentaire' => 'string',
+        ]);
+
+        $review = Review::create([
+            'client_id' =>$request->client_id, 
+            'freelancer_id' => auth()->id(),
+            'note' => $request->note,
+            'commentaire' => $request->commentaire,
+        ]);
+
+        return response()->json($review, 201);
+    }
 
     public function index($freelancer_id)
     {
